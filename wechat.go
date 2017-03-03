@@ -17,10 +17,12 @@ var (
 )
 
 func Run(appID, appSecret string) error {
+	if appID == "" || appSecret == "" {
+		return fmt.Errorf("you haven't set wechat app ID or secret")
+	}
 	if running {
 		return fmt.Errorf("wechat already running")
 	}
-
 	running = true
 
 	AppID = appID
