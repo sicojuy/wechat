@@ -12,25 +12,25 @@ package main
 
 import (
     "log"
-    "github.com/sicojuy/wechat"
+	"github.com/sicojuy/wechat"
 )
 
 const (
-    AppID    = "you wechat app ID"
-    AppSecret    = "you wechat app secret"
+	AppID     = "" // "your wechat app ID"
+	AppSecret = "" // "your wechat app secret"
 )
 
 func main() {
-    err := wechat.Run(AppID, AppSecret)
-    if err != nil {
-        log.Fatal(err)
-    }
+	err := wechat.Run(AppID, AppSecret)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-    userList, err := wechat.GetUserList()
-    if err != nil {
-        log.Fatal(err)
-    }
+	userList, err := wechat.GetUserList()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-    log.Printf("user open ID list: %+v", userList.Data.OpenID)
+	log.Printf("get users count: %d", len(userList.Data.OpenID))
 }
 ```
