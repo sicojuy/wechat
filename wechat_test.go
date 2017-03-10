@@ -39,3 +39,15 @@ func TestWechat(t *testing.T) {
 
 	t.Logf("temporary qrcode info: %+v", qrInfo)
 }
+
+func TestVerifySignature(t *testing.T) {
+	sign := "ab3cc020222d51c52171f8a93e748dcf41977ecf"
+	appToken := "abcd1234"
+	timestamp := "123456789"
+	nonce := "abcdefg"
+
+	err := VerifySignature(sign, appToken, timestamp, nonce)
+	if err != nil {
+		t.Error(err)
+	}
+}

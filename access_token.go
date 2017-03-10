@@ -26,8 +26,8 @@ type TokenResponse struct {
 func updateAccessToken() error {
 	params := url.Values{}
 	params.Set("grant_type", "client_credential")
-	params.Set("appid", AppID)
-	params.Set("secret", AppSecret)
+	params.Set("appid", appID)
+	params.Set("secret", appSecret)
 
 	url := wechatAPI + "/cgi-bin/token?" + params.Encode()
 	token := &TokenResponse{}

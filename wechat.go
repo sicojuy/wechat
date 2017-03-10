@@ -10,23 +10,27 @@ const (
 )
 
 var (
-	AppID     string
-	AppSecret string
+	appID     string
+	appSecret string
 
 	running bool
 )
 
-func Run(appID, appSecret string) error {
-	if appID == "" || appSecret == "" {
-		return fmt.Errorf("you haven't set wechat app ID or secret")
+func Run(_appID, _appSecret string) error {
+	if _appID == "" {
+		return fmt.Errorf("app ID is empty")
 	}
+	if _appSecret == "" {
+		return fmt.Errorf("app secret is empty")
+	}
+
+	appID = _appID
+	appSecret = _appSecret
+
 	if running {
 		return fmt.Errorf("wechat already running")
 	}
 	running = true
-
-	AppID = appID
-	AppSecret = appSecret
 
 	err := updateAccessToken()
 	if err != nil {
