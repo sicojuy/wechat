@@ -39,15 +39,17 @@ func Run(_appID, _appSecret string) error {
 
 	sleepSecs := TokenExpireIn() / 2
 	go func() {
-		time.Sleep(time.Duration(sleepSecs) * time.Second)
-		err := updateAccessToken()
-		if err != nil {
-			if TokenExpireAt() < time.Now().Unix() {
-				panic(err)
+		for {
+			time.Sleep(time.Duration(sleepSecs) * time.Second)
+			err := updateAccessToken()
+			if err != nil {
+				if TokenExpireAt() < time.Now().Unix() {
+					panic(err)
+				}
+				sleepSecs = 60
+			} else {
+				sleepSecs = TokenExpireIn() / 2
 			}
-			sleepSecs = 60
-		} else {
-			sleepSecs = TokenExpireIn() / 2
 		}
 	}()
 

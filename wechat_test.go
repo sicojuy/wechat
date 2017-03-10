@@ -15,6 +15,10 @@ func TestWechat(t *testing.T) {
 		t.Fatal("init error: ", err)
 	}
 
+	t.Logf("AccessToken: %s", AccessToken())
+	t.Logf("Expire in: %d", TokenExpireIn())
+	t.Logf("Expire at: %d", TokenExpireAt())
+
 	userList, err := GetUserList()
 	if err != nil {
 		t.Error("get user list error: ", err)
