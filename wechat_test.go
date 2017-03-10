@@ -42,6 +42,13 @@ func TestWechat(t *testing.T) {
 	}
 
 	t.Logf("temporary qrcode info: %+v", qrInfo)
+
+	qrInfo, err = GetPermanentQrCode("liaoziqian")
+	if err != nil {
+		t.Error("get permanent qrcode error: ", err)
+	}
+
+	t.Logf("permanent qrcode info: %+v", qrInfo)
 }
 
 func TestVerifySignature(t *testing.T) {

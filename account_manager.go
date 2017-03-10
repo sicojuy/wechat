@@ -9,8 +9,9 @@ import (
 )
 
 const (
-	QR_SCENE       = "QR_SCENE"       // temporary qrcode
-	QR_LIMIT_SCENE = "QR_LIMIT_SCENE" // permanent qrcode
+	QR_SCENE           = "QR_SCENE"           // temporary qrcode
+	QR_LIMIT_SCENE     = "QR_LIMIT_SCENE"     // permanent qrcode id
+	QR_LIMIT_STR_SCENE = "QR_LIMIT_STR_SCENE" // permanent qrcode string
 )
 
 type QrCodeAction struct {
@@ -58,11 +59,9 @@ func GetTemporaryQrCode(expireSecs uint32, sceneID uint32) (*QrCodeInfo, error) 
 	return getQrCode(action)
 }
 
-func GetPermanentQrCode(expireSecs uint32, sceneID uint32, sceneStr string) (*QrCodeInfo, error) {
+func GetPermanentQrCode(sceneStr string) (*QrCodeInfo, error) {
 	action := &QrCodeAction{}
-	action.ExpireSeconds = expireSecs
-	action.ActionName = QR_SCENE
-	action.ActionInfo.Scene.SceneID = sceneID
+	action.ActionName = QR_LIMIT_STR_SCENE
 	action.ActionInfo.Scene.SceneStr = sceneStr
 	return getQrCode(action)
 }
