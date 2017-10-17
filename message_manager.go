@@ -14,23 +14,19 @@ type TemplateMessageResponse struct {
 	MsgID   int    `json:"msgid"`
 }
 
-func SendTemplateMessage(data []byte) (int, error) {
+func SendTemplateMessage(data []byte) (msgID int, errCode int, errMsg string) {
 	params := url.Values{}
 	params.Set("access_token", AccessToken())
 	url := wechatAPI + "/cgi-bin/message/template/send?" + params.Encode()
 	res, err := http.Post(url, "application/json", bytes.NewReader(data))
 	if err != nil {
-		return -1, err
+		return 0, -1, err.Error()
 	}
 	defer res.Body.Close()
 	tmr := &TemplateMessageResponse{}
 	err = json.NewDecoder(res.Body).Decode(tmr)
 	if err != nil {
-		return -1, fmt.Errorf("decode response error: %s", err)
+		return 0, -1, fmt.Sprintf("decode response error: %s", err)
 	}
-	if tmr.ErrCode != 0 {
-		return -1, fmt.Errorf("send template message error, code %d, %s", tmr.ErrCode, tmr.ErrMsg)
-	}
-
-	return tmr.MsgID, nil
+	return tmr.MsgID, tmr.ErrCode, tmr.ErrMsg
 }
