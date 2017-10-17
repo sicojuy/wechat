@@ -1,11 +1,11 @@
 package wechat
 
 import (
-	"net/url"
-
+	"bytes"
+	"encoding/json"
 	"fmt"
-
-	"github.com/astaxie/beego/httplib"
+	"net/http"
+	"net/url"
 )
 
 const (
@@ -36,14 +36,20 @@ type QrCodeInfo struct {
 func getQrCode(action *QrCodeAction) (*QrCodeInfo, error) {
 	params := url.Values{}
 	params.Set("access_token", AccessToken())
-	req, err := httplib.Post(wechatAPI + "/cgi-bin/qrcode/create?" + params.Encode()).JSONBody(action)
+	url := wechatAPI + "/cgi-bin/qrcode/create?" + params.Encode()
+	data, err := json.Marshal(action)
 	if err != nil {
 		return nil, err
 	}
-	qrInfo := &QrCodeInfo{}
-	err = req.ToJSON(qrInfo)
+	res, err := http.Post(url, "application/json", bytes.NewReader(data))
 	if err != nil {
 		return nil, err
+	}
+	defer res.Body.Close()
+	qrInfo := &QrCodeInfo{}
+	err = json.NewDecoder(res.Body).Decode(qrInfo)
+	if err != nil {
+		return nil, fmt.Errorf("decode response error: %s", err)
 	}
 	if qrInfo.ErrCode != 0 {
 		return nil, fmt.Errorf("get qrcode return code %d, %s", qrInfo.ErrCode, qrInfo.ErrMsg)

@@ -1,12 +1,12 @@
 package wechat
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"net/url"
 	"sync"
 	"time"
-
-	"github.com/astaxie/beego/httplib"
 )
 
 var (
@@ -28,12 +28,17 @@ func updateAccessToken() error {
 	params.Set("grant_type", "client_credential")
 	params.Set("appid", appID)
 	params.Set("secret", appSecret)
-
 	url := wechatAPI + "/cgi-bin/token?" + params.Encode()
-	token := &TokenResponse{}
-	err := httplib.Get(url).ToJSON(token)
+	res, err := http.Get(url)
 	if err != nil {
 		return fmt.Errorf("get access token error: %s", err)
+	}
+	defer res.Body.Close()
+
+	token := &TokenResponse{}
+	err = json.NewDecoder(res.Body).Decode(token)
+	if err != nil {
+		return fmt.Errorf("decode response error: %s", err)
 	}
 
 	if token.ErrCode != 0 {

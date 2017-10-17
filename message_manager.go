@@ -1,10 +1,11 @@
 package wechat
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"net/url"
-
-	"github.com/astaxie/beego/httplib"
 )
 
 type TemplateMessageResponse struct {
@@ -13,21 +14,23 @@ type TemplateMessageResponse struct {
 	MsgID   int    `json:"msgid"`
 }
 
-func SendTemplateMessage(tempMsg interface{}) (int, error) {
+func SendTemplateMessage(data []byte) (int, error) {
 	params := url.Values{}
 	params.Set("access_token", AccessToken())
-	req, err := httplib.Post(wechatAPI + "/cgi-bin/message/template/send?" + params.Encode()).JSONBody(tempMsg)
+	url := wechatAPI + "/cgi-bin/message/template/send?" + params.Encode()
+	res, err := http.Post(url, "application/json", bytes.NewReader(data))
 	if err != nil {
 		return -1, err
 	}
-	res := &TemplateMessageResponse{}
-	err = req.ToJSON(res)
+	defer res.Body.Close()
+	tmr := &TemplateMessageResponse{}
+	err = json.NewDecoder(res.Body).Decode(tmr)
 	if err != nil {
-		return -1, err
+		return -1, fmt.Errorf("decode response error: %s", err)
 	}
-	if res.ErrCode != 0 {
-		return -1, fmt.Errorf("send template message error, code %d, %s", res.ErrCode, res.ErrMsg)
+	if tmr.ErrCode != 0 {
+		return -1, fmt.Errorf("send template message error, code %d, %s", tmr.ErrCode, tmr.ErrMsg)
 	}
 
-	return res.MsgID, nil
+	return tmr.MsgID, nil
 }
