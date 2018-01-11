@@ -11,10 +11,10 @@ import (
 type TemplateMessageResponse struct {
 	ErrCode int    `json:"errcode"`
 	ErrMsg  string `json:"errmsg"`
-	MsgID   int    `json:"msgid"`
+	MsgID   int64  `json:"msgid"`
 }
 
-func SendTemplateMessage(data []byte) (msgID int, errCode int, errMsg string) {
+func SendTemplateMessage(data []byte) (msgID int64, errCode int, errMsg string) {
 	params := url.Values{}
 	params.Set("access_token", AccessToken())
 	url := wechatAPI + "/cgi-bin/message/template/send?" + params.Encode()
